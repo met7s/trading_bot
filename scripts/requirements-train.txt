@@ -1,0 +1,6 @@
+# OFFLINE training-only dependencies (research). NOT required by the live bot.
+# The live path stays dependency-free: train_model.py exports plain JSON
+# coefficients and model.py (live) scores with a pure-Python sigmoid.
+# Install into a separate/research env if needed:  pip install -r scripts/requirements-train.txt
+numpy>=2.0
+scikit-learn>=1.5

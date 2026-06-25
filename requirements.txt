@@ -1,0 +1,41 @@
+# ----------------------------------------------------------------------------
+# requirements.txt  —  BTC 15-Minute Up/Down Polymarket bot
+# Python 3.11+
+# ----------------------------------------------------------------------------
+#
+# DESIGN NOTE ON THE SDK (read this before installing):
+#
+# You asked for the "unified Polymarket Python SDK (py-sdk)". That package is
+# real (installed as `polymarket-client`, imported as `polymarket`) but it is
+# currently published with a BETA badge, its public API is explicitly described
+# as unstable, and — critically — its README only documents *public market
+# reads* (get_market). It does NOT yet publicly document order placement,
+# cancellation, or order-book streaming, which are exactly the surfaces a
+# money-handling bot lives or dies on.
+#
+# For that reason this codebase is built on `py-clob-client`, the production
+# CLOB SDK (currently ~v0.34.x, the one Polymarket's own docs use for order
+# placement). It is wrapped behind a thin adapter in `exchange.py`, so when
+# `polymarket-client` stabilises its trading API you can swap the adapter
+# internals without touching strategy/risk/main. See README.md.
+#
+# ----------------------------------------------------------------------------
+
+# --- Polymarket CLOB trading SDK (auth, order signing, CTF approvals) --------
+# Pulls in its own deps: eth-account, py-order-utils, poly-eip712-structs,
+# py-builder-signing-sdk, eth-utils, httpx.
+py-clob-client>=0.34.0
+
+# --- Async networking --------------------------------------------------------
+websockets>=12.0          # CLOB market channel + Binance trade stream
+aiohttp>=3.9.0            # async REST (Gamma discovery + Binance fallback poll)
+
+# --- Secrets / config --------------------------------------------------------
+python-dotenv>=1.0.0      # load .env (the SDK does NOT auto-load .env at runtime)
+
+# --- Web3 helpers (usually transitively installed by py-clob-client) ---------
+# Pinned explicitly so wallet/address handling is reproducible.
+eth-account>=0.11.0
+web3>=6.15.0
+
+# sqlite3 is in the Python standard library — no dependency needed.
